@@ -1,0 +1,99 @@
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<title>Payer via PayPal</title>
+</head>
+<body>
+
+
+
+
+<div class="card col-md-4" style="height: 500px; margin-left: 32.5%; margin-top: 15%;">
+
+    <div class="card-body">
+	 <h3 style="color: green; margin-top: 20px; margin-bottom: 10px; text-align: center; ">Reservation  enrégistré ,</h3>
+     <h1 style="color: rgb(24, 112, 228); margin-top: 20px; margin-bottom: 50px; text-align: center;">  Payer pour confirmer </h1>
+       <div id="paypal-boutons"></div> 
+     <a href="{%url 'home' %}">  <button class="btn-primary" style="background-color: rgb(18, 120, 255); width: 70%; border: 0; border-radius: 5px; margin-left: 15%; height: 40px; margin-top: 80px;"> Annuler </button></a>
+    </div>
+  </div>
+
+<!-- Le conteneur des boutons PayPal -->
+
+
+
+<!-- 1. Importation de la SDK JavaScript PayPal -->
+<script src="https://www.paypal.com/sdk/js?client-id=ARihLWW7p_qff_fIs8w6Dzoxz_9KxNmlZa6SHBcAZLDn1vmID00O9pX2C6kZRLqVInLIT_Wys3C7W0Bs"></script>
+<script src="https://www.paypal.com/sdk/js?client-id=LIVE_CLIENT_ID" ></script>
+<script>
+	// 2. Afficher le bouton PayPal
+	paypal.Buttons({
+
+		// 3. Configurer la transaction
+		createOrder : function (data, actions) {
+
+			// Les produits à payer avec leurs details
+			var produits = [
+				{
+					name : "Produit 1",
+					description : "Description du produit 1",
+					quantity : 1,
+					unit_amount : { value : 9.9, currency_code : "USD" }
+				},
+				{
+					name : "Produit 2",
+					description : "Description du produit 2",
+					quantity : 1,
+					unit_amount : { value : 8.0, currency_code : "USD" }
+				}
+			];
+
+			// Le total des produits
+			var total_amount = produits.reduce(function (total, product) {
+				return total + product.unit_amount.value * product.quantity;
+			}, 0);
+
+			// La transaction
+			return actions.order.create({
+				purchase_units : [{
+					items : produits,
+					amount : {
+						value : total_amount,
+						currency_code : "USD",
+						breakdown : {
+							item_total : { value : total_amount, currency_code : "USD" }
+						}
+					}
+				}]
+			});
+		},
+
+		// 4. Capturer la transaction après l'approbation de l'utilisateur
+		onApprove : function (data, actions) {
+			return actions.order.capture().then(function(details) {
+
+				// Afficher Les details de la transaction dans la console
+				console.log(details);
+
+				// On affiche un message de succès
+				alert(details.payer.name.given_name + ' ' + details.payer.name.surname + ', votre transaction est effectuée. Vous allez recevoir une notification très bientôt lorsque nous validons votre paiement.');
+
+			});
+		},
+
+		// 5. Annuler la transaction
+		onCancel : function (data) {
+			alert("Transaction annulée !");
+		}
+
+	}).render("#paypal-boutons");
+
+</script>
+</body>
+</html>

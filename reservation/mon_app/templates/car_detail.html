@@ -1,0 +1,83 @@
+
+{% extends 'base.html' %}
+
+
+<!-- car_detail.html -->
+
+
+{% block content %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ car.marque }} {{ car.modele }}</title>
+</head>
+<body>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-md-6">
+                <img src="{{ car.image.url }}" alt="Car Image" style="width: 500px;">
+            </div>
+            <div class="col-md-6">
+                <p style="color: rgb(9, 50, 233);"><strong>Mark:  </strong><span id="carMarque"> {{ car.marque }}</span></p>
+                <p><strong>Model:  </strong><span id="carModele"> {{ car.modele }}</span></p>
+                <p><strong>Year:   </strong><span id="carYear"> {{ car.year }}</span></p>
+                <p><strong>Color: </strong><span id="carColor"> {{ car.color }}</span></p>
+                <p style="color: rgb(15, 247, 92);"><strong>Price:    </strong><span id="carPrice"> $ {{ car.price }}</span></p>
+                <p><strong>Description: </strong><span id="carDescription">{{ car.description }}</span></p>
+                {% if car.free %}  
+                <p style="color: green;">La voiture est libre</p>
+                {% else %} 
+                <p style="color: red;">La voiture est occupée</p>
+                {% endif %}
+            </div>
+        </div>
+        <div class="modal-footer">
+            <a href="{% url 'commande' %}"><button type="button" class="btn btn-primary">Command</button></a> 
+           <a href="{% url 'home' %}"> <button type="button" class="btn btn-secondary" data-dismiss="modal">Back</button></a>
+        </div>
+    </div>
+
+    <h1 style="text-align: center;">Other cars </h1>
+
+    <div class="container">
+        <div class="row">
+            {% for car in featured_cars %}
+            <div class="col-lg-4 ">
+                <div class="single-featured-cars">
+                    <div class="featured-img-boix">
+                        <!-- Ajout d'un attribut data-toggle pour activer le modal au clic -->
+                        <a href="#" class="car-link" data-toggle="modal" data-target="#carModal{{ car.id }}" data-marque="{{ car.marque }}" data-modele="{{ car.modele }}" data-year="{{ car.year }}" data-color="{{ car.color }}" data-price="{{ car.price }}" data-description="{{ car.description }}" data-image="{{ car.image.url }}" data-free="{{ car.free }}">
+                            <div class="featured-cars-img">
+                                <a href="{% url 'car_detail' car.id %}"> <img src="{{ car.image.url }}" alt="{{ car.marque }} "> </a>
+                            </div>
+                        </a>
+                        <div class="featured-model-info">
+                            <p>
+                                model: {{ car.year }}
+                                <span class="featured-mi-span"> {{ car.color }}</span> 
+                                <span class="featured-hp-span" style="color: green;"> {{ car.price }} $</span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="featured-cars-txt">
+                        <h2><a href="#" class="car-link" data-toggle="modal" data-target="#carModal{{ car.id }}" data-marque="{{ car.marque }}" data-modele="{{ car.modele }}" data-year="{{ car.year }}" data-color="{{ car.color }}" data-price="{{ car.price }}" data-description="{{ car.description }}" data-image="{{ car.image.url }}"  data-free="{{ car.free }}">  {{ car.marque }} <span> {{ car.modele }}  </span> </a></h2>
+                        <h3 style="color: blue;">${{ car.price }}</h3>
+                        <p>
+                            
+                        </p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+
+
+
+
+
+</body>
+</html>
+
+{% endblock %}
